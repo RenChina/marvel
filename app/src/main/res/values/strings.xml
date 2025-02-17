@@ -9,4 +9,6 @@
     <string name="hero_description_deadpool">Please don’t make the super suit green&#8230;or animated!</string>
     <string name="hero_description_iron_man">I AM IRON MAN</string>
     <string name="hero_description_spider_man">In iron suit</string>
+    <string name="marvel_api_key">b9df47947ab951d8c0a86014efe43711</string>
+    <string name="marvel_private_key">9c213ff9bd717d9da92e0ce3798ce9903baf19ba</string>
 </resources>

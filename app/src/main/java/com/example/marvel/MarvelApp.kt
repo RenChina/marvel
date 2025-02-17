@@ -2,9 +2,13 @@ package com.example.marvel
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
+import com.example.marvel.api.CharacterViewModel
 
 @Composable
-fun MarvelApp() {
+fun MarvelApp(characterViewModel: CharacterViewModel) {
     val navController = rememberNavController()
-    NavGraph(navController = navController)
+    NavGraph(
+        navController = navController,
+        characterViewModel = characterViewModel
+    )
 }

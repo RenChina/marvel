@@ -8,24 +8,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 
+
 @Composable
 fun CardLayout(
     url: String,
-    nameResId: Int,
-    onClick: (String) -> Unit
+    name: String,
+    onClick: (String, String) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
             .width(350.dp)
-            .clickable { onClick(url) }
+            .clickable { onClick(url, name) }
     ) {
         AsyncImage(
             contentScale = ContentScale.Crop,
@@ -33,16 +37,23 @@ fun CardLayout(
                 .fillMaxSize()
                 .clip(RoundedCornerShape(14.dp)),
             model = url,
-            contentDescription = null,
+            contentDescription = "Изображение персонажа $name",
         )
         Text(
-            text = stringResource(id = nameResId),
+            text = name,
             fontWeight = FontWeight.Bold,
-            fontSize = 36.sp,
-            color = androidx.compose.ui.graphics.Color.White,
+            fontSize = 24.sp,
+            color = Color.White,
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 30.dp, bottom = 30.dp)
+                .padding(start = 16.dp, bottom = 16.dp),
+            style = TextStyle(
+                shadow = Shadow(
+                    color = Color.Black,
+                    offset = Offset(4f, 4f),
+                    blurRadius = 16f
+                )
+            )
         )
     }
 }
