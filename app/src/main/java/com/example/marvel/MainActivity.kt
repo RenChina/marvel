@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.marvel.api.ApiKeyViewModel
 import com.example.marvel.api.CharacterViewModel
 import com.example.marvel.api.CharacterViewModelFactory
-
+import com.example.marvel.api.RetrofitInstance
+import com.example.marvel.data.db.MarvelDatabase
+import com.example.marvel.data.repository.CharacterRepository
 
 class MainActivity : ComponentActivity() {
 
@@ -19,7 +21,16 @@ class MainActivity : ComponentActivity() {
 
         apiKeyViewModel = ViewModelProvider(this)[ApiKeyViewModel::class.java]
 
-        val factory = CharacterViewModelFactory(apiKeyViewModel)
+        val marvelDatabase = MarvelDatabase.getInstance(this)
+        val characterDao = marvelDatabase.characterDao()
+
+        val characterRepository = CharacterRepository(
+            apiService = RetrofitInstance.apiService,
+            characterDao = characterDao
+        )
+
+        val factory = CharacterViewModelFactory(characterRepository, apiKeyViewModel)
+
         characterViewModel = ViewModelProvider(this, factory)[CharacterViewModel::class.java]
 
         setContent {

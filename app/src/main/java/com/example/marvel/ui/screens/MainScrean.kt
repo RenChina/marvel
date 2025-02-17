@@ -1,5 +1,6 @@
 package com.example.marvel.ui.screens
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -29,63 +30,40 @@ import com.example.marvel.data.AppUrls
 import com.example.marvel.ui.components.CardLayout
 import com.example.marvel.ui.theme.Gray1
 import com.example.marvel.ui.theme.Red1
+import com.example.marvel.utils.isNetworkAvailable
 
 @Composable
-fun MainScreen(navController: NavHostController, characterViewModel: CharacterViewModel) {
+fun MainScreen(navController: NavHostController, characterViewModel: CharacterViewModel, context: Context) {
     val characters = characterViewModel.characters.collectAsState().value
     val errorMessage = characterViewModel.errorMessage.collectAsState().value
-    val isLoading = characters.isEmpty() && errorMessage == null // Если персонажи не загружены и нет ошибки, значит идет загрузка
-    val hasError = errorMessage != null // Если есть сообщение об ошибке
+    val isLoading = characters.isEmpty() && errorMessage == null
+    val hasError = errorMessage != null
 
-    LaunchedEffect(Unit) {
-        characterViewModel.getCharacters(
-            apiKey = characterViewModel.apiKeyViewModel.apiKey,
-            privateKey = characterViewModel.apiKeyViewModel.privateKey
-        )
+    val isNetworkAvailable = isNetworkAvailable(context)
+
+    LaunchedEffect(isNetworkAvailable) {
+        characterViewModel.getCharacters(isNetworkAvailable)
     }
 
     Box {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Gray1)
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer { clip = false }
-        ) {
+        Box(modifier = Modifier.fillMaxSize().background(Gray1))
+        Box(modifier = Modifier.fillMaxSize().graphicsLayer { clip = false }) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 withTransform({
-                    rotate(
-                        degrees = 45f,
-                        pivot = Offset(0f, size.height)
-                    )
+                    rotate(degrees = 45f, pivot = Offset(0f, size.height))
                 }) {
-                    drawRect(
-                        color = Red1,
-                        size = Size(3000f, 4000f),
-                        topLeft = Offset(0f, size.height - 3000f)
-                    )
+                    drawRect(color = Red1, size = Size(3000f, 4000f), topLeft = Offset(0f, size.height - 3000f))
                 }
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             AsyncImage(
-                modifier = Modifier
-                    .fillMaxWidth(0.4f)
-                    .fillMaxHeight(0.15f)
-                    .padding(top = 30.dp, bottom = 50.dp),
+                modifier = Modifier.fillMaxWidth(0.4f).fillMaxHeight(0.15f).padding(top = 30.dp, bottom = 50.dp),
                 model = AppUrls.MARVEL_LOGO_URL,
                 contentDescription = null,
                 placeholder = ColorPainter(Color.Gray)
             )
-
 
             Text(
                 text = "Choose your hero",
@@ -101,26 +79,17 @@ fun MainScreen(navController: NavHostController, characterViewModel: CharacterVi
                 )
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.95f)
-                    .padding(top = 50.dp)
-            ) {
+            Box(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.95f).padding(top = 50.dp)) {
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 30.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     when {
                         isLoading -> {
-                            items(2) {
-                                PlaceholderCard()
-                            }
+                            items(2) { PlaceholderCard() }
                         }
                         hasError -> {
-                            items(2) {
-                                PlaceholderCard(showError = true, errorMessage = errorMessage)
-                            }
+                            items(2) { PlaceholderCard(showError = true, errorMessage = errorMessage) }
                         }
                         else -> {
                             items(characters) { character ->
